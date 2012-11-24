@@ -1,0 +1,80 @@
+(ns tic-tac-toe.core
+  (:use [seesaw core graphics]))
+
+(def EMPTY "?")
+
+(def X "X")
+(def Y "Y")
+
+(def state (atom {}))
+
+(defn render [c g]
+  (let [w (.getWidth c)
+        h (.getHeight c)
+        w1 (/ w 3)
+        h1 (/ h 3)
+        w2 (* w 0.667)
+        h2 (* h 0.667)]
+    (.drawLine g w1 0 w1 h)
+    (.drawLine g w2 0 w2 h)
+    (.drawLine g 0 h1 w h1)
+    (.drawLine g 0 h2 w h2)
+    (println @state)
+    ))
+
+(def board-old (canvas :id :canvas
+                   :paint render
+                   :preferred-size [500 :by 500]))
+
+(defn make-square [offset]
+  (button
+   :id offset
+   :text (str offset)
+   :listen [:action #(alert % offset)]))
+
+(def board
+  (grid-panel
+   :columns 3
+   :items [
+           (make-square [0 0])
+           (make-square [1 0])
+           ]))
+  
+            
+
+
+(defn find-quad [p l]
+  "return 0, 1 or 2"
+  (cond
+   (< p (* l 0.333)) 0 
+   (< p (* l 0.667)) 1
+   :else 2))
+
+
+(defn selected-box [dim point]
+  (let [w (.getWidth dim)
+        h (.getHeight dim)
+        x (.getX point)
+        y (.getY point)
+        xq (find-quad x w)
+        yq (find-quad y h)]
+    [xq yq]))
+    
+(defn handle [e]
+  (let [dim (-> e .getComponent .getSize)
+        point (.getPoint e)
+        box  (selected-box dim point)]
+    (swap! state assoc box X)
+    (println box)))
+        
+(defn -main [& args]
+  (invoke-later
+   (listen board
+           :mouse-clicked handle) 
+   (-> (frame :title "Hello",
+              
+              :size [500 :by 500]
+              :content board
+              :on-close :exit)
+       pack!
+       show!)))
