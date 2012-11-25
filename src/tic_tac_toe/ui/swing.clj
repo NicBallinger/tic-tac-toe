@@ -1,17 +1,19 @@
 (ns tic-tac-toe.ui.swing
-  (:use [seesaw core graphics]
-        [tic-tac-toe core]))
+  (:require [tic-tac-toe.core :as ttt])
+  (:use [seesaw core graphics]))
+
+(def piece-ref (atom ttt/X))
 
 (def board (grid-panel :columns 3))
 
 (defn handle [box e]
-  (let [[piece msg] (make-move box)]
+  (let [piece @piece-ref
+        msg (ttt/make-move piece box)]
     (when piece (config! e :text piece))
     (when msg
       (doseq [b (config board :items)]
         (config! b :text ""))
       (alert msg))))
-
 
 (defn make-square [offset]
   (button
@@ -20,27 +22,29 @@
    :listen [:action (partial handle offset)]))
 
 (config! board
-   :items [
-           (make-square [0 0])
-           (make-square [1 0])
-           (make-square [2 0])
+         :items (map make-square ttt/all-ids))
 
-           (make-square [0 1])
-           (make-square [1 1])
-           (make-square [2 1])
+(defn state-change-both [key ref old new]
+  (swap! piece-ref (fn [f] (ttt/current-piece new))))
 
-           (make-square [0 2])
-           (make-square [1 2])
-           (make-square [2 2])
+(defn state-change-single [piece key ref old new]
+  (swap! piece-ref (fn [f] piece)))
 
-           ])
-
+(defn state-change-random [piece key ref old new]
+  (let [ids (ttt/empty-squares)
+        offset (rand-int (count ids))
+        box (nth (list* ids) offset)]
+    (ttt/make-move piece box)))
 
 (defn -main [& args]
   (invoke-later
+   (ttt/add-game-watch :me (partial state-change-single ttt/X))
+   (ttt/add-game-watch :me2 (partial state-change-random ttt/Y))
    (-> (frame :title "Tic Tac Toe",
               :size [500 :by 500]
               :content board
               :on-close :exit)
        pack!
-       show!)))
+       show!)
+     (ttt/start-game)))
+

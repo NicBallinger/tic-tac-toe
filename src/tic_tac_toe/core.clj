@@ -1,16 +1,31 @@
-(ns tic-tac-toe.core)
+(ns tic-tac-toe.core
+  (:use [clojure set]))
 
 (def EMPTY "?")
 
 (def X "X")
 (def Y "Y")
 
+(def all-ids (for [y (range 3) x (range 3)] [x y]))
+
 (def initial-state {
                   :next-piece (cycle [X Y])
                   :board {}
                   })
 
-(def state (atom initial-state))
+(def state (atom {}))
+
+(defn add-game-watch [key fn]
+  (add-watch state key fn))
+
+(defn occupied-squares []
+  (-> @state :board keys))
+
+(defn empty-squares []
+  (difference (set all-ids) (set (occupied-squares))))
+
+(defn start-game []
+  (swap! state (fn [f] initial-state)))
 
 (def winning-combos
   [
@@ -37,8 +52,9 @@
   (= 9 (count (:board @state))))
 
 (defn end-game [msg]
+  (println msg)
+  (start-game)
   
-  (swap! state (fn [f] initial-state))
   msg)
 
 (defn game-over []
@@ -47,19 +63,27 @@
      (seq piece) (end-game (str "GAME OVER: " (first piece)))
      (cat) (end-game "GAME OVER: CAT"))))
 
-(defn valid-move [box]
+(defn valid-move? [box]
   (not (get-in @state [:board box])))
 
 (defn place-piece [st box piece]
-  (println "keys" (keys st))
   (->
    (assoc-in st [:board box]  piece)
    (update-in [:next-piece] rest)))
 
-(defn make-move [box]
-  (when (valid-move box)
-    (let [piece (first (get-in @state [:next-piece]))]
-      (swap! state place-piece box piece)
-      (println "make-move" box (:board @state))
-      [piece (game-over)])))
+(defn current-piece
+  ([] (current-piece @state))
+  ([st]  (first (get-in st [:next-piece]))))
+
+(defn expected-piece? [piece]
+  (= piece (current-piece)))
+
+(defn make-move [piece box]
+  (when (and (expected-piece? piece) (valid-move? box))
+    (swap! state place-piece box piece)
+    (println "OS" (empty-squares))
+    (game-over)))
+
+
+
 
