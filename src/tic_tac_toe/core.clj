@@ -27,6 +27,9 @@
 (defn start-game []
   (swap! state (fn [f] initial-state)))
 
+(defn restart-game []
+  (swap! state assoc :board {})
+
 (def winning-combos
   [
    [[0 0] [1 1] [2 2]]
@@ -54,7 +57,7 @@
 
 (defn end-game [msg]
   (println msg)
-  (start-game)
+  (restart-game)
   
   msg)
 
