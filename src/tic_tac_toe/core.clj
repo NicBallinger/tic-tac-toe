@@ -48,7 +48,8 @@
     (println "is-win?" boxes pieces first-piece eq)
     (if (and first-piece eq) first-piece)))
 
-(defn cat []
+(defn cat? []
+  (println "cat?" (count (:board @state)))
   (= 9 (count (:board @state))))
 
 (defn end-game [msg]
@@ -61,7 +62,7 @@
   (let [piece (filter identity (map is-win? winning-combos))]
     (cond
      (seq piece) (end-game (str "GAME OVER: " (first piece)))
-     (cat) (end-game "GAME OVER: CAT"))))
+     (cat?) (end-game "GAME OVER: CAT"))))
 
 (defn valid-move? [box]
   (not (get-in @state [:board box])))
@@ -83,6 +84,7 @@
     (swap! state place-piece box piece)
     (println "OS" (empty-squares))
     (game-over)))
+
 
 
 
