@@ -9,8 +9,9 @@
 (def all-ids (for [y (range 3) x (range 3)] [x y]))
 
 (def initial-state {
-                  :next-piece (cycle [X Y])
-                  :board {}
+                    :next-piece (cycle [X Y])
+                    :board {}
+                    :move-allowed true
                   })
 
 (def state (atom {}))
@@ -28,7 +29,8 @@
   (swap! state (fn [f] initial-state)))
 
 (defn restart-game []
-  (swap! state assoc :board {})
+  (println "restart")
+  (swap! state merge {:board {} :move-allowed true :msg nil}))
 
 (def winning-combos
   [
@@ -43,50 +45,58 @@
    [[0 2] [1 2] [2 2]]
    ])
 
-(defn is-win? [boxes]
-  (let [board (:board @state)
+(defn is-win? [st boxes]
+  (let [board (:board st)
         pieces (map #(get board %) boxes)
         first-piece (some identity pieces)
         eq (apply = pieces)]
     (println "is-win?" boxes pieces first-piece eq)
     (if (and first-piece eq) first-piece)))
 
-(defn cat? []
-  (println "cat?" (count (:board @state)))
-  (= 9 (count (:board @state))))
+(defn cat? [st]
+  (= 9 (count (:board st))))
 
-(defn end-game [msg]
-  (println msg)
-  (restart-game)
+(defn winning-player [st]
+  (let [combos (map (partial is-win? st) winning-combos)]
+    (first (filter identity combos))))
   
-  msg)
+(defn end-game [st msg]
+  (-> st
+      (assoc :move-allowed false)
+      (assoc :msg msg)))
 
-(defn game-over []
-  (let [piece (filter identity (map is-win? winning-combos))]
+(defn check-game-state [st]
+  (let [piece (winning-player st)] 
     (cond
-     (seq piece) (end-game (str "GAME OVER: " (first piece)))
-     (cat?) (end-game "GAME OVER: CAT"))))
+     piece (end-game st (str "GAME OVER: " piece))
+     (cat? st) (end-game st "GAME OVER: CAT")
+     :else st)))
 
-(defn valid-move? [box]
-  (not (get-in @state [:board box])))
+(defn valid-move? [st box]
+  (not (get-in st [:board box])))
 
 (defn place-piece [st box piece]
   (->
-   (assoc-in st [:board box]  piece)
-   (update-in [:next-piece] rest)))
+   (assoc-in st [:board box] piece)
+   (update-in [:next-piece] rest)
+   (check-game-state)))
 
 (defn current-piece
   ([] (current-piece @state))
   ([st]  (first (get-in st [:next-piece]))))
 
-(defn expected-piece? [piece]
-  (= piece (current-piece)))
+(defn expected-piece? [st piece]
+  (= piece (current-piece st)))
+
+(defn move-allowed? [st]
+  (:move-allowed st))
 
 (defn make-move [piece box]
-  (when (and (expected-piece? piece) (valid-move? box))
-    (swap! state place-piece box piece)
-    (println "OS" (empty-squares))
-    (game-over)))
+  (let [st @state]
+    (when (and (move-allowed? st) (expected-piece? st piece) (valid-move? st box))
+      (swap! state place-piece box piece))))
+
+
 
 
 

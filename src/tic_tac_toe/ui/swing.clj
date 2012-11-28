@@ -8,11 +8,7 @@
 
 (defn handle [box e]
   (let [piece @piece-ref
-        msg (ttt/make-move piece box)]
-    (when msg
-      (doseq [b (config board :items)]
-        (config! b :text ""))
-      (alert msg))))
+        msg (ttt/make-move piece box)]))
 
 (defn make-square [offset]
   (button
@@ -24,6 +20,7 @@
          :items (map make-square ttt/all-ids))
 
 (defn update-squares [game-board]
+  (println "update squares")
   (let [squares (config board :items)]
     (doseq [sq squares]
       (let [piece (get game-board (config sq :user-data))]
@@ -36,26 +33,45 @@
   (update-squares (:board new)))
 
 (defn state-change-single [piece key ref old new]
+  (println " ==> " (:move-allowed new) (:msg new))
   (swap! piece-ref (fn [f] piece))
-  (update-squares (:board new)))
+  (update-squares (:board new))
+  
+  (when (and (not= (:msg old) (:msg new)) (:msg new))
+    (alert (:msg new))
+    (ttt/restart-game)))
 
 
 (defn state-change-random [piece key ref old new]
-  (let [ids (ttt/empty-squares)
-        offset (rand-int (count ids))
-        box (nth (list* ids) offset)]
-    (if box 
-      (ttt/make-move piece box))))
+  (if (= piece (ttt/current-piece new))
+    (let [ids (ttt/empty-squares)
+          offset (rand-int (count ids))
+          box (nth (list* ids) offset)]
+      (when box
+        (println "random" offset box piece)
+        (ttt/make-move piece box)))))
+
+(defn c-v-c []
+  (ttt/add-game-watch :me (partial state-change-single "observer"))
+  (ttt/add-game-watch :me2 (partial state-change-random ttt/X))
+  (ttt/add-game-watch :me3 (partial state-change-random ttt/Y)))
+
+(defn h-v-c []
+  (ttt/add-game-watch :me (partial state-change-single ttt/X))
+  (ttt/add-game-watch :me2 (partial state-change-random ttt/Y)))
+
 
 (defn -main [& args]
-  (invoke-later
-   (ttt/add-game-watch :me (partial state-change-single ttt/X))
-   (ttt/add-game-watch :me2 (partial state-change-random ttt/Y))
-   (-> (frame :title "Tic Tac Toe",
-              :size [500 :by 500]
-              :content board
-              :on-close :exit)
-       pack!
-       show!)
-     (ttt/start-game)))
+  (let [t (first args)]
+    (invoke-later
+     (cond
+      (= "cc" t) (c-v-c)
+      :else (h-v-c))
+     (-> (frame :title "Tic Tac Toe",
+                :size [500 :by 500]
+                :content board
+                :on-close :exit)
+         pack!
+         show!)
+     (ttt/start-game))))
 
