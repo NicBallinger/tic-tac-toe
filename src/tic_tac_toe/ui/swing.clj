@@ -41,24 +41,31 @@
     (alert (:msg new))
     (ttt/restart-game)))
 
+(defn state-change-observer [key ref old new]
+  (update-squares (:board new))
+  
+  (when (and (not= (:msg old) (:msg new)) (:msg new))
+    (alert (:msg new))
+    (ttt/restart-game)))
 
-(defn state-change-random [piece key ref old new]
+
+(defn state-change-random [piece wait key ref old new]
   (if (= piece (ttt/current-piece new))
     (let [ids (ttt/empty-squares)
           offset (rand-int (count ids))
           box (nth (list* ids) offset)]
       (when box
-        (println "random" offset box piece)
+        (Thread/sleep wait)
         (ttt/make-move piece box)))))
 
 (defn c-v-c []
-  (ttt/add-game-watch :me (partial state-change-single "observer"))
-  (ttt/add-game-watch :me2 (partial state-change-random ttt/X))
-  (ttt/add-game-watch :me3 (partial state-change-random ttt/Y)))
+  (ttt/add-game-watch :me (partial state-change-observer))
+  (ttt/add-game-watch :me2 (partial state-change-random ttt/X 500 ))
+  (ttt/add-game-watch :me3 (partial state-change-random ttt/Y 500)))
 
 (defn h-v-c []
-  (ttt/add-game-watch :me (partial state-change-single ttt/X))
-  (ttt/add-game-watch :me2 (partial state-change-random ttt/Y)))
+  (ttt/add-game-watch :me (partial state-change-single ttt/X 0))
+  (ttt/add-game-watch :me2 (partial state-change-random ttt/Y 0)))
 
 
 (defn -main [& args]
