@@ -60,8 +60,8 @@
 
 (defn c-v-c []
   (ttt/add-game-watch :me state-change-observer)
-  (ttt/add-game-watch :me2 (invoke-later (partial state-change-random ttt/X 500 )))
-  (ttt/add-game-watch :me3 (invoke-later (partial state-change-random ttt/Y 500))))
+  (ttt/add-game-watch :me2 #(invoke-later (state-change-random ttt/X 500 %1 %2 %3 %4)))
+  (ttt/add-game-watch :me3 #(invoke-later (state-change-random ttt/Y 500 %1 %2 %3 %4))))
 
 (defn h-v-c []
   (ttt/add-game-watch :me (partial state-change-single ttt/X))
