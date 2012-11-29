@@ -1,5 +1,6 @@
 (ns tic-tac-toe.ui.tty
-  (:require [tic-tac-toe.core :as ttt]))
+  (:require [tic-tac-toe.core :as ttt]
+            [tic-tac-toe.ai.random :as ai-random]))
 
 (defn to-number
   ([row col]   (+ (* row 3) col 1))
@@ -31,38 +32,31 @@
 
            
 (defn update-squares [piece board]
-  (println "update-squares" board)
   (print-board piece board))
 
 (defn my-turn? [st piece]
   (= piece (ttt/current-piece st)))
 
-(defn state-change-single [piece key ref old new]
-  (println " ==> " (:move-allowed new) (:msg new))
-  (update-squares piece (:board new))
-  (when (my-turn? new piece)
-    (if (and  (not= (:msg old) (:msg new)) (:msg new))
-      (do
-        (println (:msg new))
-        (ttt/restart-game))
-      (do
-        (println "Enter your move:")
-        (let [move (read-line)]
-          (println "You entered " move)
-          (ttt/make-move piece (move-map move)))))))
+(defn end-game [st]
+  (println (:msg st))
+  (ttt/restart-game))
 
-(defn state-change-random [piece wait key ref old new]
-  (if (= piece (ttt/current-piece new))
-    (let [ids (ttt/empty-squares)
-          offset (rand-int (count ids))
-          box (nth (list* ids) offset)]
-      (when box
-          (Thread/sleep wait)
-          (ttt/make-move piece box)))))
+(defn take-turn [piece]
+  (println "Enter your move:")
+  (let [move (read-line)]
+    (println "You entered " move)
+    (ttt/make-move piece (move-map move))))
+
+(defn state-change-single [piece key ref old new]
+  (update-squares piece (:board new))
+  (cond
+   (ttt/game-over? new) (end-game new)
+   (my-turn? new piece) (take-turn piece)))
+
 
 (defn h-v-c []
   (ttt/add-game-watch :me (partial state-change-single ttt/X))
-  (ttt/add-game-watch :me2 (partial state-change-random ttt/Y 0)))
+  (ttt/add-game-watch :me2 (partial ai-random/state-change-random ttt/Y 0)))
 
 
 (defn -main [& args]

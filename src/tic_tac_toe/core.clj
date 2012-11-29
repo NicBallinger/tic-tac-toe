@@ -29,7 +29,6 @@
   (swap! state (fn [f] initial-state)))
 
 (defn restart-game []
-  (println "restart")
   (swap! state merge {:board {} :move-allowed true :msg nil}))
 
 (def winning-combos
@@ -50,7 +49,6 @@
         pieces (map #(get board %) boxes)
         first-piece (some identity pieces)
         eq (apply = pieces)]
-    (println "is-win?" boxes pieces first-piece eq)
     (if (and first-piece eq) first-piece)))
 
 (defn cat? [st]
@@ -71,6 +69,9 @@
      piece (end-game st (str "GAME OVER: " piece))
      (cat? st) (end-game st "GAME OVER: CAT")
      :else st)))
+
+(defn game-over? [st]
+  (not (:move-allowed st)))
 
 (defn valid-move? [st box]
   (not (get-in st [:board box])))

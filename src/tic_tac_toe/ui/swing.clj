@@ -1,5 +1,6 @@
 (ns tic-tac-toe.ui.swing
-  (:require [tic-tac-toe.core :as ttt])
+  (:require [tic-tac-toe.core :as ttt]
+            [tic-tac-toe.ai.random :as ai-random])
   (:use [seesaw core graphics]))
 
 (def piece-ref (atom ttt/X))
@@ -14,13 +15,13 @@
   (button
    :user-data offset
    :text ""
+   :size [50 :by 50]
    :listen [:action (partial handle offset)]))
 
 (config! board
          :items (map make-square ttt/all-ids))
 
 (defn update-squares [game-board]
-  (println "update squares")
   (let [squares (config board :items)]
     (doseq [sq squares]
       (let [piece (get game-board (config sq :user-data))]
@@ -33,7 +34,6 @@
   (update-squares (:board new)))
 
 (defn state-change-single [piece key ref old new]
-  (println " ==> " (:move-allowed new) (:msg new))
   (swap! piece-ref (fn [f] piece))
   (update-squares (:board new))
   
@@ -48,24 +48,14 @@
     (alert (:msg new))
     (ttt/restart-game)))
 
-
-(defn state-change-random [piece wait key ref old new]
-  (if (= piece (ttt/current-piece new))
-    (let [ids (ttt/empty-squares)
-          offset (rand-int (count ids))
-          box (nth (list* ids) offset)]
-      (when box
-          (Thread/sleep wait)
-          (ttt/make-move piece box)))))
-
 (defn c-v-c []
   (ttt/add-game-watch :me state-change-observer)
-  (ttt/add-game-watch :me2 #(invoke-later (state-change-random ttt/X 500 %1 %2 %3 %4)))
-  (ttt/add-game-watch :me3 #(invoke-later (state-change-random ttt/Y 500 %1 %2 %3 %4))))
+  (ttt/add-game-watch :me2 #(invoke-later (ai-random/state-change-random ttt/X 500 %1 %2 %3 %4)))
+  (ttt/add-game-watch :me3 #(invoke-later (ai-random/state-change-random ttt/Y 500 %1 %2 %3 %4))))
 
 (defn h-v-c []
   (ttt/add-game-watch :me (partial state-change-single ttt/X))
-  (ttt/add-game-watch :me2 (partial state-change-random ttt/Y 0)))
+  (ttt/add-game-watch :me2 (partial ai-random/state-change-random ttt/Y 0)))
 
 
 (defn -main [& args]
