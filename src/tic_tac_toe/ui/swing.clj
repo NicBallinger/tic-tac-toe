@@ -55,13 +55,13 @@
           offset (rand-int (count ids))
           box (nth (list* ids) offset)]
       (when box
-         (Thread/sleep wait)
-         (ttt/make-move piece box)))))
+          (Thread/sleep wait)
+          (ttt/make-move piece box)))))
 
 (defn c-v-c []
   (ttt/add-game-watch :me state-change-observer)
-  (ttt/add-game-watch :me2 #(future (state-change-random ttt/X 500 %1 %2 %3 %4)))
-  (ttt/add-game-watch :me3 #(future (state-change-random ttt/Y 500 %1 %2 %3 %4))))
+  (ttt/add-game-watch :me2 #(invoke-later (state-change-random ttt/X 500 %1 %2 %3 %4)))
+  (ttt/add-game-watch :me3 #(invoke-later (state-change-random ttt/Y 500 %1 %2 %3 %4))))
 
 (defn h-v-c []
   (ttt/add-game-watch :me (partial state-change-single ttt/X))
