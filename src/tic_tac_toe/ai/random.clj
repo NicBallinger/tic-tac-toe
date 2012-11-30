@@ -7,5 +7,6 @@
           offset (rand-int (count ids))
           box (nth (list* ids) offset)]
       (when box
-          (Thread/sleep wait)
-          (ttt/make-move piece box)))))
+        (when (> wait 0)
+          (Thread/sleep wait))
+        (ttt/make-move piece box)))))

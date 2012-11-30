@@ -1,5 +1,5 @@
 (ns tic-tac-toe.core
-  (:use [clojure set]))
+  (:use [clojure.set :only [difference]]))
 
 (def EMPTY "?")
 
@@ -9,12 +9,15 @@
 (def all-ids (for [y (range 3) x (range 3)] [x y]))
 
 (def initial-state {
-                    :next-piece (cycle [X Y])
+                    :current-piece X
                     :board {}
                     :move-allowed true
+                    :id 0
                   })
 
 (def state (atom {}))
+
+(def next-piece (atom (cycle [X Y])))
 
 (defn add-game-watch [key fn]
   (add-watch state key fn))
@@ -76,15 +79,22 @@
 (defn valid-move? [st box]
   (not (get-in st [:board box])))
 
+(defn update-next-piece []
+  (first (swap! next-piece next)))
+
+(defn newer-state? [old new]
+  (< (:id old) (:id new)))
+
 (defn place-piece [st box piece]
   (->
    (assoc-in st [:board box] piece)
-   (update-in [:next-piece] rest)
+   (assoc-in [:current-piece] (first @next-piece))
+   (update-in [:id] inc)
    (check-game-state)))
 
 (defn current-piece
   ([] (current-piece @state))
-  ([st]  (first (get-in st [:next-piece]))))
+  ([st]  (get st :current-piece)))
 
 (defn expected-piece? [st piece]
   (= piece (current-piece st)))
@@ -93,8 +103,10 @@
   (:move-allowed st))
 
 (defn make-move [piece box]
+
   (let [st @state]
     (when (and (move-allowed? st) (expected-piece? st piece) (valid-move? st box))
+      (update-next-piece)
       (swap! state place-piece box piece))))
 
 
