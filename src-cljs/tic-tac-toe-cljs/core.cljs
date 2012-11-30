@@ -4,14 +4,10 @@
 
 (def last-id (atom -1))
 
-(defn to-id [row col]
-  [row col])
-
 (defn set-html! [dom content]
   (set! (. dom -innerHTML) content))
 
 (defn update-squares [game-board]
-  
   (let [boxes ttt/all-ids]
     (doseq [box boxes]
       (let [button (.getElementById js/document (str box))
@@ -38,8 +34,8 @@
   (js/alert (str "alerter" (:board new))))
 
 (defn init []
-  (ttt/add-game-watch :me (partial state-change ttt/X))
-  (ttt/add-game-watch :me2 (partial ai-random/state-change-random ttt/Y 0))
+  (ttt/add-game-watch :p1 (partial state-change ttt/X))
+  (ttt/add-game-watch :p2 (partial ai-random/state-change-random ttt/Y 0))
   (ttt/start-game)
   ;;(add-watch ttt/state :key alerter)
 )

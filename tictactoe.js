@@ -21340,9 +21340,6 @@ goog.require("cljs.core");
 goog.require("tic_tac_toe.ai.random");
 goog.require("tic_tac_toe.core");
 tic_tac_toe_cljs.core.last_id = cljs.core.atom.call(null, -1);
-tic_tac_toe_cljs.core.to_id = function to_id(row, col) {
-  return cljs.core.PersistentVector.fromArray([row, col], true)
-};
 tic_tac_toe_cljs.core.set_html_BANG_ = function set_html_BANG_(dom, content) {
   return dom.innerHTML = content
 };
@@ -21390,7 +21387,6 @@ tic_tac_toe_cljs.core.pressed = function() {
   return pressed
 }();
 tic_tac_toe_cljs.core.state_change = function state_change(piece, key, ref, old, new$) {
-  alert([cljs.core.str("update"), cljs.core.str((new cljs.core.Keyword("\ufdd0'board")).call(null, new$)), cljs.core.str((new cljs.core.Keyword("\ufdd0'id")).call(null, old)), cljs.core.str((new cljs.core.Keyword("\ufdd0'id")).call(null, new$))].join(""));
   if(cljs.core.deref.call(null, tic_tac_toe_cljs.core.last_id) < (new cljs.core.Keyword("\ufdd0'id")).call(null, new$)) {
     cljs.core.swap_BANG_.call(null, tic_tac_toe_cljs.core.last_id, function(f) {
       return(new cljs.core.Keyword("\ufdd0'id")).call(null, new$)
@@ -21409,7 +21405,7 @@ tic_tac_toe_cljs.core.alerter = function alerter(key, ref, old, new$) {
   return alert([cljs.core.str("alerter"), cljs.core.str((new cljs.core.Keyword("\ufdd0'board")).call(null, new$))].join(""))
 };
 tic_tac_toe_cljs.core.init = function init() {
-  tic_tac_toe.core.add_game_watch.call(null, "\ufdd0'me", cljs.core.partial.call(null, tic_tac_toe_cljs.core.state_change, tic_tac_toe.core.X));
-  tic_tac_toe.core.add_game_watch.call(null, "\ufdd0'me2", cljs.core.partial.call(null, tic_tac_toe.ai.random.state_change_random, tic_tac_toe.core.Y, 0));
+  tic_tac_toe.core.add_game_watch.call(null, "\ufdd0'p1", cljs.core.partial.call(null, tic_tac_toe_cljs.core.state_change, tic_tac_toe.core.X));
+  tic_tac_toe.core.add_game_watch.call(null, "\ufdd0'p2", cljs.core.partial.call(null, tic_tac_toe.ai.random.state_change_random, tic_tac_toe.core.Y, 0));
   return tic_tac_toe.core.start_game.call(null)
 };
