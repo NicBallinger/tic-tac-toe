@@ -1,80 +1,117 @@
 (ns tic-tac-toe.core
-  (:use [seesaw core graphics]))
+  (:use [clojure.set :only [difference]]))
 
 (def EMPTY "?")
 
 (def X "X")
 (def Y "Y")
 
+(def all-ids (for [y (range 3) x (range 3)] [x y]))
+
+(def initial-state {
+                    :current-piece X
+                    :board {}
+                    :move-allowed true
+                    :id 0
+                  })
+
 (def state (atom {}))
 
-(defn render [c g]
-  (let [w (.getWidth c)
-        h (.getHeight c)
-        w1 (/ w 3)
-        h1 (/ h 3)
-        w2 (* w 0.667)
-        h2 (* h 0.667)]
-    (.drawLine g w1 0 w1 h)
-    (.drawLine g w2 0 w2 h)
-    (.drawLine g 0 h1 w h1)
-    (.drawLine g 0 h2 w h2)
-    (println @state)
-    ))
+(def next-piece (atom (cycle [X Y])))
 
-(def board-old (canvas :id :canvas
-                   :paint render
-                   :preferred-size [500 :by 500]))
+(defn add-game-watch [key fn]
+  (add-watch state key fn))
 
-(defn make-square [offset]
-  (button
-   :id offset
-   :text (str offset)
-   :listen [:action #(alert % offset)]))
+(defn occupied-squares []
+  (-> @state :board keys))
 
-(def board
-  (grid-panel
-   :columns 3
-   :items [
-           (make-square [0 0])
-           (make-square [1 0])
-           ]))
+(defn empty-squares []
+  (difference (set all-ids) (set (occupied-squares))))
+
+(defn start-game []
+  (swap! state (fn [f] initial-state)))
+
+(defn restart-game []
+  (swap! state merge {:board {} :move-allowed true :msg nil}))
+
+(def winning-combos
+  [
+   [[0 0] [1 1] [2 2]]
+   [[2 0] [1 1] [0 2]]
+   [[0 0] [0 1] [0 2]]
+   [[1 0] [1 1] [1 2]]
+   [[2 0] [2 1] [2 2]]
+
+   [[0 0] [1 0] [2 0]]
+   [[0 1] [1 1] [2 1]]
+   [[0 2] [1 2] [2 2]]
+   ])
+
+(defn is-win? [st boxes]
+  (let [board (:board st)
+        pieces (map #(get board %) boxes)
+        first-piece (some identity pieces)
+        eq (apply = pieces)]
+    (if (and first-piece eq) first-piece)))
+
+(defn cat? [st]
+  (= 9 (count (:board st))))
+
+(defn winning-player [st]
+  (let [combos (map (partial is-win? st) winning-combos)]
+    (first (filter identity combos))))
   
-            
+(defn end-game [st msg]
+  (-> st
+      (assoc :move-allowed false)
+      (assoc :msg msg)))
+
+(defn check-game-state [st]
+  (let [piece (winning-player st)] 
+    (cond
+     piece (end-game st (str "GAME OVER: " piece))
+     (cat? st) (end-game st "GAME OVER: CAT")
+     :else st)))
+
+(defn game-over? [st]
+  (not (:move-allowed st)))
+
+(defn valid-move? [st box]
+  (not (get-in st [:board box])))
+
+(defn update-next-piece []
+  (first (swap! next-piece next)))
+
+(defn newer-state? [old new]
+  (< (:id old) (:id new)))
+
+(defn place-piece [st box piece]
+  (->
+   (assoc-in st [:board box] piece)
+   (assoc-in [:current-piece] (first @next-piece))
+   (update-in [:id] inc)
+   (check-game-state)))
+
+(defn current-piece
+  ([] (current-piece @state))
+  ([st]  (get st :current-piece)))
+
+(defn expected-piece? [st piece]
+  (= piece (current-piece st)))
+
+(defn move-allowed? [st]
+  (:move-allowed st))
+
+(defn make-move [piece box]
+
+  (let [st @state]
+    (when (and (move-allowed? st) (expected-piece? st piece) (valid-move? st box))
+      (update-next-piece)
+      (swap! state place-piece box piece))))
 
 
-(defn find-quad [p l]
-  "return 0, 1 or 2"
-  (cond
-   (< p (* l 0.333)) 0 
-   (< p (* l 0.667)) 1
-   :else 2))
 
 
-(defn selected-box [dim point]
-  (let [w (.getWidth dim)
-        h (.getHeight dim)
-        x (.getX point)
-        y (.getY point)
-        xq (find-quad x w)
-        yq (find-quad y h)]
-    [xq yq]))
-    
-(defn handle [e]
-  (let [dim (-> e .getComponent .getSize)
-        point (.getPoint e)
-        box  (selected-box dim point)]
-    (swap! state assoc box X)
-    (println box)))
-        
-(defn -main [& args]
-  (invoke-later
-   (listen board
-           :mouse-clicked handle) 
-   (-> (frame :title "Hello",
-              
-              :size [500 :by 500]
-              :content board
-              :on-close :exit)
-       pack!
-       show!)))
+
+
+

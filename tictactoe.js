@@ -498,6 +498,15 @@ goog.base = function(me, opt_methodName, var_args) {
 goog.scope = function(fn) {
   fn.call(goog.global)
 };
+goog.provide("goog.debug.Error");
+goog.debug.Error = function(opt_msg) {
+  this.stack = (new Error).stack || "";
+  if(opt_msg) {
+    this.message = String(opt_msg)
+  }
+};
+goog.inherits(goog.debug.Error, Error);
+goog.debug.Error.prototype.name = "CustomError";
 goog.provide("goog.string");
 goog.provide("goog.string.Unicode");
 goog.string.Unicode = {NBSP:"\u00a0"};
@@ -925,15 +934,6 @@ goog.string.toSelectorCaseCache_ = {};
 goog.string.toSelectorCase = function(str) {
   return goog.string.toSelectorCaseCache_[str] || (goog.string.toSelectorCaseCache_[str] = String(str).replace(/([A-Z])/g, "-$1").toLowerCase())
 };
-goog.provide("goog.debug.Error");
-goog.debug.Error = function(opt_msg) {
-  this.stack = (new Error).stack || "";
-  if(opt_msg) {
-    this.message = String(opt_msg)
-  }
-};
-goog.inherits(goog.debug.Error, Error);
-goog.debug.Error.prototype.name = "CustomError";
 goog.provide("goog.asserts");
 goog.provide("goog.asserts.AssertionError");
 goog.require("goog.debug.Error");
@@ -20805,6 +20805,101 @@ cljs.core.UUID.prototype.toString = function() {
   return cljs.core.pr_str.call(null, this$)
 };
 cljs.core.UUID;
+goog.provide("tic_tac_toe.ai.random");
+goog.require("cljs.core");
+goog.require("tic_tac_toe.core");
+tic_tac_toe.ai.random.state_change_random = function state_change_random(piece, wait, key, ref, old, new$) {
+  if(cljs.core._EQ_.call(null, piece, tic_tac_toe.core.current_piece.call(null, new$))) {
+    var ids = tic_tac_toe.core.empty_squares.call(null);
+    var offset = cljs.core.rand_int.call(null, cljs.core.count.call(null, ids));
+    var box = cljs.core.nth.call(null, cljs.core.list_STAR_.call(null, ids), offset);
+    if(cljs.core.truth_(box)) {
+      if(wait > 0) {
+        Thread.sleep.call(null, wait)
+      }else {
+      }
+      return tic_tac_toe.core.make_move.call(null, piece, box)
+    }else {
+      return null
+    }
+  }else {
+    return null
+  }
+};
+goog.provide("tic_tac_toe_cljs.core");
+goog.require("cljs.core");
+goog.require("tic_tac_toe.ai.random");
+goog.require("tic_tac_toe.core");
+tic_tac_toe_cljs.core.last_id = cljs.core.atom.call(null, -1);
+tic_tac_toe_cljs.core.set_html_BANG_ = function set_html_BANG_(dom, content) {
+  return dom.innerHTML = content
+};
+tic_tac_toe_cljs.core.update_squares = function update_squares(game_board) {
+  var boxes = tic_tac_toe.core.all_ids;
+  var G__2849 = cljs.core.seq.call(null, boxes);
+  while(true) {
+    if(G__2849) {
+      var box = cljs.core.first.call(null, G__2849);
+      var button = document.getElementById([cljs.core.str(box)].join(""));
+      var piece = cljs.core._lookup.call(null, game_board, box, null);
+      if(cljs.core.truth_(piece)) {
+        tic_tac_toe_cljs.core.set_html_BANG_.call(null, button, piece)
+      }else {
+        tic_tac_toe_cljs.core.set_html_BANG_.call(null, button, "?")
+      }
+      var G__2850 = cljs.core.next.call(null, G__2849);
+      G__2849 = G__2850;
+      continue
+    }else {
+      return null
+    }
+    break
+  }
+};
+tic_tac_toe_cljs.core.pressed = function() {
+  var pressed = null;
+  var pressed__1 = function(box) {
+    return tic_tac_toe.core.make_move.call(null, tic_tac_toe.core.X, box)
+  };
+  var pressed__2 = function(row, col) {
+    return pressed.call(null, cljs.core.PersistentVector.fromArray([row, col], true))
+  };
+  pressed = function(row, col) {
+    switch(arguments.length) {
+      case 1:
+        return pressed__1.call(this, row);
+      case 2:
+        return pressed__2.call(this, row, col)
+    }
+    throw new Error("Invalid arity: " + arguments.length);
+  };
+  pressed.cljs$lang$arity$1 = pressed__1;
+  pressed.cljs$lang$arity$2 = pressed__2;
+  return pressed
+}();
+tic_tac_toe_cljs.core.state_change = function state_change(piece, key, ref, old, new$) {
+  if(cljs.core.deref.call(null, tic_tac_toe_cljs.core.last_id) < (new cljs.core.Keyword("\ufdd0'id")).call(null, new$)) {
+    cljs.core.swap_BANG_.call(null, tic_tac_toe_cljs.core.last_id, function(f) {
+      return(new cljs.core.Keyword("\ufdd0'id")).call(null, new$)
+    });
+    tic_tac_toe_cljs.core.update_squares.call(null, (new cljs.core.Keyword("\ufdd0'board")).call(null, new$))
+  }else {
+  }
+  if(cljs.core.truth_(tic_tac_toe.core.game_over_QMARK_.call(null, new$))) {
+    alert((new cljs.core.Keyword("\ufdd0'msg")).call(null, new$));
+    return tic_tac_toe.core.restart_game.call(null)
+  }else {
+    return null
+  }
+};
+tic_tac_toe_cljs.core.alerter = function alerter(key, ref, old, new$) {
+  return alert([cljs.core.str("alerter"), cljs.core.str((new cljs.core.Keyword("\ufdd0'board")).call(null, new$))].join(""))
+};
+tic_tac_toe_cljs.core.init = function init() {
+  tic_tac_toe.core.add_game_watch.call(null, "\ufdd0'p1", cljs.core.partial.call(null, tic_tac_toe_cljs.core.state_change, tic_tac_toe.core.X));
+  tic_tac_toe.core.add_game_watch.call(null, "\ufdd0'p2", cljs.core.partial.call(null, tic_tac_toe.ai.random.state_change_random, tic_tac_toe.core.Y, 0));
+  return tic_tac_toe.core.start_game.call(null)
+};
 goog.provide("clojure.set");
 goog.require("cljs.core");
 clojure.set.bubble_max_key = function bubble_max_key(k, coll) {
@@ -21139,37 +21234,38 @@ goog.require("clojure.set");
 tic_tac_toe.core.EMPTY = "?";
 tic_tac_toe.core.X = "X";
 tic_tac_toe.core.Y = "Y";
+tic_tac_toe.core.initial_state = cljs.core.ObjMap.fromObject(["\ufdd0'current-piece", "\ufdd0'board", "\ufdd0'move-allowed", "\ufdd0'id"], {"\ufdd0'current-piece":tic_tac_toe.core.X, "\ufdd0'board":cljs.core.ObjMap.EMPTY, "\ufdd0'move-allowed":true, "\ufdd0'id":0});
 tic_tac_toe.core.all_ids = function() {
-  var iter__2470__auto__ = function iter__3499(s__3500) {
+  var iter__2470__auto__ = function iter__2843(s__2844) {
     return new cljs.core.LazySeq(null, false, function() {
-      var s__3500__$1 = s__3500;
+      var s__2844__$1 = s__2844;
       while(true) {
-        if(cljs.core.seq.call(null, s__3500__$1)) {
-          var y = cljs.core.first.call(null, s__3500__$1);
-          var iterys__2468__auto__ = function(s__3500__$1, y) {
-            return function iter__3501(s__3502) {
-              return new cljs.core.LazySeq(null, false, function(s__3500__$1, y) {
+        if(cljs.core.seq.call(null, s__2844__$1)) {
+          var y = cljs.core.first.call(null, s__2844__$1);
+          var iterys__2468__auto__ = function(s__2844__$1, y) {
+            return function iter__2845(s__2846) {
+              return new cljs.core.LazySeq(null, false, function(s__2844__$1, y) {
                 return function() {
-                  var s__3502__$1 = s__3502;
+                  var s__2846__$1 = s__2846;
                   while(true) {
-                    if(cljs.core.seq.call(null, s__3502__$1)) {
-                      var x = cljs.core.first.call(null, s__3502__$1);
-                      return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([x, y], true), iter__3501.call(null, cljs.core.rest.call(null, s__3502__$1)))
+                    if(cljs.core.seq.call(null, s__2846__$1)) {
+                      var x = cljs.core.first.call(null, s__2846__$1);
+                      return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([x, y], true), iter__2845.call(null, cljs.core.rest.call(null, s__2846__$1)))
                     }else {
                       return null
                     }
                     break
                   }
                 }
-              }(s__3500__$1, y), null)
+              }(s__2844__$1, y), null)
             }
-          }(s__3500__$1, y);
+          }(s__2844__$1, y);
           var fs__2469__auto__ = cljs.core.seq.call(null, iterys__2468__auto__.call(null, cljs.core.range.call(null, 3)));
           if(fs__2469__auto__) {
-            return cljs.core.concat.call(null, fs__2469__auto__, iter__3499.call(null, cljs.core.rest.call(null, s__3500__$1)))
+            return cljs.core.concat.call(null, fs__2469__auto__, iter__2843.call(null, cljs.core.rest.call(null, s__2844__$1)))
           }else {
-            var G__3503 = cljs.core.rest.call(null, s__3500__$1);
-            s__3500__$1 = G__3503;
+            var G__2847 = cljs.core.rest.call(null, s__2844__$1);
+            s__2844__$1 = G__2847;
             continue
           }
         }else {
@@ -21181,17 +21277,14 @@ tic_tac_toe.core.all_ids = function() {
   };
   return iter__2470__auto__.call(null, cljs.core.range.call(null, 3))
 }();
-tic_tac_toe.core.initial_state = cljs.core.ObjMap.fromObject(["\ufdd0'current-piece", "\ufdd0'board", "\ufdd0'move-allowed", "\ufdd0'id"], {"\ufdd0'current-piece":tic_tac_toe.core.X, "\ufdd0'board":cljs.core.ObjMap.EMPTY, "\ufdd0'move-allowed":true, "\ufdd0'id":0});
+tic_tac_toe.core.winning_combos = cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 0], true), cljs.core.PersistentVector.fromArray([1, 1], true), cljs.core.PersistentVector.fromArray([2, 2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([2, 0], true), cljs.core.PersistentVector.fromArray([1, 1], true), cljs.core.PersistentVector.fromArray([0, 2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 
+0], true), cljs.core.PersistentVector.fromArray([0, 1], true), cljs.core.PersistentVector.fromArray([0, 2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([1, 0], true), cljs.core.PersistentVector.fromArray([1, 1], true), cljs.core.PersistentVector.fromArray([1, 2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([2, 0], true), cljs.core.PersistentVector.fromArray([2, 1], true), cljs.core.PersistentVector.fromArray([2, 
+2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 0], true), cljs.core.PersistentVector.fromArray([1, 0], true), cljs.core.PersistentVector.fromArray([2, 0], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 1], true), cljs.core.PersistentVector.fromArray([1, 1], true), cljs.core.PersistentVector.fromArray([2, 1], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 
+2], true), cljs.core.PersistentVector.fromArray([1, 2], true), cljs.core.PersistentVector.fromArray([2, 2], true)], true)], true);
 tic_tac_toe.core.state = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
 tic_tac_toe.core.next_piece = cljs.core.atom.call(null, cljs.core.cycle.call(null, cljs.core.PersistentVector.fromArray([tic_tac_toe.core.X, tic_tac_toe.core.Y], true)));
 tic_tac_toe.core.add_game_watch = function add_game_watch(key, fn) {
   return cljs.core.add_watch.call(null, tic_tac_toe.core.state, key, fn)
-};
-tic_tac_toe.core.occupied_squares = function occupied_squares() {
-  return cljs.core.keys.call(null, (new cljs.core.Keyword("\ufdd0'board")).call(null, cljs.core.deref.call(null, tic_tac_toe.core.state)))
-};
-tic_tac_toe.core.empty_squares = function empty_squares() {
-  return clojure.set.difference.call(null, cljs.core.set.call(null, tic_tac_toe.core.all_ids), cljs.core.set.call(null, tic_tac_toe.core.occupied_squares.call(null)))
 };
 tic_tac_toe.core.start_game = function start_game() {
   return cljs.core.swap_BANG_.call(null, tic_tac_toe.core.state, function(f) {
@@ -21201,29 +21294,25 @@ tic_tac_toe.core.start_game = function start_game() {
 tic_tac_toe.core.restart_game = function restart_game() {
   return cljs.core.swap_BANG_.call(null, tic_tac_toe.core.state, cljs.core.merge, cljs.core.ObjMap.fromObject(["\ufdd0'board", "\ufdd0'move-allowed", "\ufdd0'msg"], {"\ufdd0'board":cljs.core.ObjMap.EMPTY, "\ufdd0'move-allowed":true, "\ufdd0'msg":null}))
 };
-tic_tac_toe.core.winning_combos = cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 0], true), cljs.core.PersistentVector.fromArray([1, 1], true), cljs.core.PersistentVector.fromArray([2, 2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([2, 0], true), cljs.core.PersistentVector.fromArray([1, 1], true), cljs.core.PersistentVector.fromArray([0, 2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 
-0], true), cljs.core.PersistentVector.fromArray([0, 1], true), cljs.core.PersistentVector.fromArray([0, 2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([1, 0], true), cljs.core.PersistentVector.fromArray([1, 1], true), cljs.core.PersistentVector.fromArray([1, 2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([2, 0], true), cljs.core.PersistentVector.fromArray([2, 1], true), cljs.core.PersistentVector.fromArray([2, 
-2], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 0], true), cljs.core.PersistentVector.fromArray([1, 0], true), cljs.core.PersistentVector.fromArray([2, 0], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 1], true), cljs.core.PersistentVector.fromArray([1, 1], true), cljs.core.PersistentVector.fromArray([2, 1], true)], true), cljs.core.PersistentVector.fromArray([cljs.core.PersistentVector.fromArray([0, 
-2], true), cljs.core.PersistentVector.fromArray([1, 2], true), cljs.core.PersistentVector.fromArray([2, 2], true)], true)], true);
-tic_tac_toe.core.is_win_QMARK_ = function is_win_QMARK_(st, boxes) {
+tic_tac_toe.core.update_next_piece = function update_next_piece() {
+  return cljs.core.first.call(null, cljs.core.swap_BANG_.call(null, tic_tac_toe.core.next_piece, cljs.core.next))
+};
+tic_tac_toe.core.occupied_squares = function occupied_squares() {
+  return cljs.core.keys.call(null, (new cljs.core.Keyword("\ufdd0'board")).call(null, cljs.core.deref.call(null, tic_tac_toe.core.state)))
+};
+tic_tac_toe.core.empty_squares = function empty_squares() {
+  return clojure.set.difference.call(null, cljs.core.set.call(null, tic_tac_toe.core.all_ids), cljs.core.set.call(null, tic_tac_toe.core.occupied_squares.call(null)))
+};
+tic_tac_toe.core.is_win_QMARK_ = function is_win_QMARK_(st, coods) {
   var board = (new cljs.core.Keyword("\ufdd0'board")).call(null, st);
-  var pieces = cljs.core.map.call(null, function(p1__3504_SHARP_) {
-    return cljs.core._lookup.call(null, board, p1__3504_SHARP_, null)
-  }, boxes);
-  var first_piece = cljs.core.some.call(null, cljs.core.identity, pieces);
-  var eq = cljs.core.apply.call(null, cljs.core._EQ_, pieces);
-  if(cljs.core.truth_(function() {
-    var and__3822__auto__ = first_piece;
-    if(cljs.core.truth_(and__3822__auto__)) {
-      return eq
+  var pieces = cljs.core.map.call(null, board, coods);
+  return cljs.core.reduce.call(null, function(p1__2848_SHARP_, p2__2849_SHARP_) {
+    if(cljs.core._EQ_.call(null, p1__2848_SHARP_, p2__2849_SHARP_)) {
+      return p1__2848_SHARP_
     }else {
-      return and__3822__auto__
+      return null
     }
-  }())) {
-    return first_piece
-  }else {
-    return null
-  }
+  }, pieces)
 };
 tic_tac_toe.core.cat_QMARK_ = function cat_QMARK_(st) {
   return cljs.core._EQ_.call(null, 9, cljs.core.count.call(null, (new cljs.core.Keyword("\ufdd0'board")).call(null, st)))
@@ -21256,9 +21345,6 @@ tic_tac_toe.core.game_over_QMARK_ = function game_over_QMARK_(st) {
 };
 tic_tac_toe.core.valid_move_QMARK_ = function valid_move_QMARK_(st, box) {
   return cljs.core.not.call(null, cljs.core.get_in.call(null, st, cljs.core.PersistentVector.fromArray(["\ufdd0'board", box], true)))
-};
-tic_tac_toe.core.update_next_piece = function update_next_piece() {
-  return cljs.core.first.call(null, cljs.core.swap_BANG_.call(null, tic_tac_toe.core.next_piece, cljs.core.next))
 };
 tic_tac_toe.core.newer_state_QMARK_ = function newer_state_QMARK_(old, new$) {
   return(new cljs.core.Keyword("\ufdd0'id")).call(null, old) < (new cljs.core.Keyword("\ufdd0'id")).call(null, new$)
@@ -21313,99 +21399,4 @@ tic_tac_toe.core.make_move = function make_move(piece, box) {
   }else {
     return null
   }
-};
-goog.provide("tic_tac_toe.ai.random");
-goog.require("cljs.core");
-goog.require("tic_tac_toe.core");
-tic_tac_toe.ai.random.state_change_random = function state_change_random(piece, wait, key, ref, old, new$) {
-  if(cljs.core._EQ_.call(null, piece, tic_tac_toe.core.current_piece.call(null, new$))) {
-    var ids = tic_tac_toe.core.empty_squares.call(null);
-    var offset = cljs.core.rand_int.call(null, cljs.core.count.call(null, ids));
-    var box = cljs.core.nth.call(null, cljs.core.list_STAR_.call(null, ids), offset);
-    if(cljs.core.truth_(box)) {
-      if(wait > 0) {
-        Thread.sleep.call(null, wait)
-      }else {
-      }
-      return tic_tac_toe.core.make_move.call(null, piece, box)
-    }else {
-      return null
-    }
-  }else {
-    return null
-  }
-};
-goog.provide("tic_tac_toe_cljs.core");
-goog.require("cljs.core");
-goog.require("tic_tac_toe.ai.random");
-goog.require("tic_tac_toe.core");
-tic_tac_toe_cljs.core.last_id = cljs.core.atom.call(null, -1);
-tic_tac_toe_cljs.core.set_html_BANG_ = function set_html_BANG_(dom, content) {
-  return dom.innerHTML = content
-};
-tic_tac_toe_cljs.core.update_squares = function update_squares(game_board) {
-  var boxes = tic_tac_toe.core.all_ids;
-  var G__2849 = cljs.core.seq.call(null, boxes);
-  while(true) {
-    if(G__2849) {
-      var box = cljs.core.first.call(null, G__2849);
-      var button = document.getElementById([cljs.core.str(box)].join(""));
-      var piece = cljs.core._lookup.call(null, game_board, box, null);
-      if(cljs.core.truth_(piece)) {
-        tic_tac_toe_cljs.core.set_html_BANG_.call(null, button, piece)
-      }else {
-        tic_tac_toe_cljs.core.set_html_BANG_.call(null, button, "?")
-      }
-      var G__2850 = cljs.core.next.call(null, G__2849);
-      G__2849 = G__2850;
-      continue
-    }else {
-      return null
-    }
-    break
-  }
-};
-tic_tac_toe_cljs.core.pressed = function() {
-  var pressed = null;
-  var pressed__1 = function(box) {
-    return tic_tac_toe.core.make_move.call(null, tic_tac_toe.core.X, box)
-  };
-  var pressed__2 = function(row, col) {
-    return pressed.call(null, cljs.core.PersistentVector.fromArray([row, col], true))
-  };
-  pressed = function(row, col) {
-    switch(arguments.length) {
-      case 1:
-        return pressed__1.call(this, row);
-      case 2:
-        return pressed__2.call(this, row, col)
-    }
-    throw new Error("Invalid arity: " + arguments.length);
-  };
-  pressed.cljs$lang$arity$1 = pressed__1;
-  pressed.cljs$lang$arity$2 = pressed__2;
-  return pressed
-}();
-tic_tac_toe_cljs.core.state_change = function state_change(piece, key, ref, old, new$) {
-  if(cljs.core.deref.call(null, tic_tac_toe_cljs.core.last_id) < (new cljs.core.Keyword("\ufdd0'id")).call(null, new$)) {
-    cljs.core.swap_BANG_.call(null, tic_tac_toe_cljs.core.last_id, function(f) {
-      return(new cljs.core.Keyword("\ufdd0'id")).call(null, new$)
-    });
-    tic_tac_toe_cljs.core.update_squares.call(null, (new cljs.core.Keyword("\ufdd0'board")).call(null, new$))
-  }else {
-  }
-  if(cljs.core.truth_(tic_tac_toe.core.game_over_QMARK_.call(null, new$))) {
-    alert((new cljs.core.Keyword("\ufdd0'msg")).call(null, new$));
-    return tic_tac_toe.core.restart_game.call(null)
-  }else {
-    return null
-  }
-};
-tic_tac_toe_cljs.core.alerter = function alerter(key, ref, old, new$) {
-  return alert([cljs.core.str("alerter"), cljs.core.str((new cljs.core.Keyword("\ufdd0'board")).call(null, new$))].join(""))
-};
-tic_tac_toe_cljs.core.init = function init() {
-  tic_tac_toe.core.add_game_watch.call(null, "\ufdd0'p1", cljs.core.partial.call(null, tic_tac_toe_cljs.core.state_change, tic_tac_toe.core.X));
-  tic_tac_toe.core.add_game_watch.call(null, "\ufdd0'p2", cljs.core.partial.call(null, tic_tac_toe.ai.random.state_change_random, tic_tac_toe.core.Y, 0));
-  return tic_tac_toe.core.start_game.call(null)
 };
