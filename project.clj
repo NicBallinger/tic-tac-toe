@@ -10,7 +10,10 @@
   :hooks [leiningen.cljsbuild]
   :source-path "src"
   :cljsbuild {
-    :builds [{:source-path "src-cljs" :compiler {:output-to "tictactoe.js" }}]
-    :crossovers [tic-tac-toe.core tic-tac-toe.ai.random]
+              :builds [{:source-path "src-cljs"
+                        :compiler {:output-to "tictactoe.js"
+                                   :optimizations :whitespace
+                                   :pretty-print true}}]
+              :crossovers [tic-tac-toe.core tic-tac-toe.ai.random]
   }
   :main tic-tac-toe.ui.tty)
