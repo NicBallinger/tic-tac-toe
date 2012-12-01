@@ -1,5 +1,8 @@
 (defproject tic-tac-toe "1.0.0-SNAPSHOT"
   :description "Tic Tac Toe"
+  :url "http://example.com/FIXME"
+  :license {:name "Eclipse Public License"
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [seesaw "1.4.2"]
                  [clojure-lanterna "0.9.2"]]
