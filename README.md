@@ -20,7 +20,8 @@ There are 4 different UIs: swing using seesaw (I just got that pun as I typed th
 * lanterna
     * Human Vs Computer: lein run -m tic-tac-toe.ui.lanterna
 * ClojureScript
-    * Load tictactoe.html in your favorite browser that supports JavaScript (obviously)
+    * Load [tictactoe.html](http://m0smith.freeshell.org/tictactoe.html) in your favorite browser that supports JavaScript (obviously)
+    * 
 
 ## License
 
