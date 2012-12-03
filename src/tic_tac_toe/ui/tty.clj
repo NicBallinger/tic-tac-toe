@@ -63,13 +63,14 @@
    (my-turn? new piece) (take-turn piece)))
 
 
-(def y-handler (partial ai-random/state-change-random
-                        ttt/Y
-                        (partial do-after 1000)))
+(defn computer-handler [piece]
+  (partial ai-random/state-change-random
+           piece
+           (partial do-after 1000)))
 
 (defn h-v-c []
   (ttt/add-game-watch :me (partial state-change-single ttt/X))
-  (ttt/add-game-watch :me2 y-handler))
+  (ttt/add-game-watch :me2 (partial computer-handler ttt/Y)))
 
 
 (defn -main [& args]
