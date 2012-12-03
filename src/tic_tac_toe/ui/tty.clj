@@ -68,12 +68,22 @@
            piece
            (partial do-after 1000)))
 
+(defn c-v-c []
+  (ttt/add-game-watch :me (partial state-change-single "an observer"))
+  (ttt/add-game-watch :x (computer-handler ttt/X))
+  (ttt/add-game-watch :y (computer-handler ttt/Y))
+  )
+
 (defn h-v-c []
-  (ttt/add-game-watch :me (partial state-change-single ttt/X))
-  (ttt/add-game-watch :me2 (partial computer-handler ttt/Y)))
+  (ttt/add-game-watch :x (partial state-change-single ttt/X))
+  (ttt/add-game-watch :y (computer-handler ttt/Y))
+  )
 
 
 (defn -main [& args]
-  (h-v-c)
+  (cond
+   (= (first args) "cc") (c-v-c)
+   :else (h-v-c))
+
   (future (ttt/start-game)))
 
