@@ -4,6 +4,9 @@ The classic tic-tac-toe game written in Clojure.  This project isn't so much abo
 technology and how to write a code base that will run in multiple user interfaces.  The tic-tac-toe games presents a 
 small but interesting problem domain.
 
+One thing that made possible to work in multiple environments was to store the game state in an atom and register 
+each player and any observers as watchers on that atom.  
+
 There are 4 different UIs: swing using seesaw (I just got that pun as I typed that), tty, laterna and ClojureScript.
 
 ## Usage
