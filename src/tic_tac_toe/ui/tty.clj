@@ -2,6 +2,14 @@
   (:require [tic-tac-toe.core :as ttt]
             [tic-tac-toe.ai.random :as ai-random]))
 
+(defn do-after "Wait for 'delay' before executing the function 'f'"
+  [delay f]
+;;  (println "do-after Delaying " delay)
+  (let [executor (java.util.concurrent.Executors/newSingleThreadScheduledExecutor)]
+  ;;  (println "do-after Delaying  " delay  executor)
+    (.schedule executor f delay java.util.concurrent.TimeUnit/MILLISECONDS)))
+
+
 (defn to-number
   ([row col]   (+ (* row 3) col 1))
   ([[row col]] (+ (* row 3) col 1)))
@@ -21,18 +29,19 @@
        (piece-at board row 1) " | "
        (piece-at board row 2) " "))
 
-(defn print-board [piece board]
-  (println move-map)
+(defn print-board [piece board current]
+
   (println (board1 board 0))
   (println boardh)
   (println (board1 board 1))
   (println boardh)
   (println (board1 board 2))
-  (println "You are " piece))
+  (println "You are " piece)
+  (println "Turn:" current))
 
            
-(defn update-squares [piece board]
-  (print-board piece board))
+(defn update-squares [piece board current]
+  (print-board piece board current))
 
 (defn my-turn? [st piece]
   (= piece (ttt/current-piece st)))
@@ -42,25 +51,28 @@
   (ttt/restart-game))
 
 (defn take-turn [piece]
-  (println "Enter your move:")
+  (print "Enter your move:")
   (let [move (read-line)]
     (println "You entered " move)
     (ttt/make-move piece (move-map move))))
 
 (defn state-change-single [piece key ref old new]
-  (update-squares piece (:board new))
+  (update-squares piece (:board new) (ttt/current-piece new))
   (cond
    (ttt/game-over? new) (end-game new)
    (my-turn? new piece) (take-turn piece)))
 
 
+(def y-handler (partial ai-random/state-change-random
+                        ttt/Y
+                        (partial do-after 1000)))
+
 (defn h-v-c []
   (ttt/add-game-watch :me (partial state-change-single ttt/X))
-  (ttt/add-game-watch :me2 (partial ai-random/state-change-random ttt/Y 0)))
+  (ttt/add-game-watch :me2 y-handler))
 
 
 (defn -main [& args]
   (h-v-c)
-  
   (future (ttt/start-game)))
 

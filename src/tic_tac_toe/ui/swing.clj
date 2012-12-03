@@ -3,6 +3,12 @@
             [tic-tac-toe.ai.random :as ai-random])
   (:use [seesaw core graphics]))
 
+
+(defn do-after "Wait for 'delay' before executing the function 'f'"
+  [delay f]
+  (let [executor (java.util.concurrent.Executors/newSingleThreadScheduledExecutor)]
+    (.schedule executor f delay java.util.concurrent.TimeUnit/MILLISECONDS)))
+
 (def piece-ref (atom ttt/X))
 
 (def board (grid-panel :columns 3))
