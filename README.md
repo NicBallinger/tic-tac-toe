@@ -1,4 +1,4 @@
-# tic-tic-toe
+# tic-tac-toe
 
 The classic tic-tac-toe game written in Clojure.  This project isn't so much about tic-tac-toe but more about Clojure
 technology and how to write a code base that will run in multiple user interfaces.  The tic-tac-toe games presents a 
