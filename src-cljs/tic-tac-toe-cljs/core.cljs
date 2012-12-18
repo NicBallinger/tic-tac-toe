@@ -35,7 +35,7 @@
 
 (defn init []
   (ttt/add-game-watch :p1 (partial state-change ttt/X))
-  (ttt/add-game-watch :p2 (partial ai-random/state-change-random ttt/Y 0))
+  (ttt/add-game-watch :p2 (partial ai-random/state-change-random ttt/Y (fn [f] (f))))
   (ttt/start-game)
   ;;(add-watch ttt/state :key alerter)
 )

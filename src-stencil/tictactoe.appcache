@@ -1,0 +1,9 @@
+#
+# {{description}}
+# Build date: {{timestamp}}
+# Built by: {{user.name.prop}}
+# Copyright {{year}}
+#
+CACHE MANIFEST
+tictactoe.html
+tictactoe.js
