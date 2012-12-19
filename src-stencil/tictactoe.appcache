@@ -1,8 +1,11 @@
 #
+# {{name}}
+#
 # {{description}}
+#
 # Build date: {{timestamp}}
 # Built by: {{user.name.prop}}
-# Copyright {{year}}
+# Copyright {{year}} Matthew O. Smith
 #
 CACHE MANIFEST
 tictactoe.html
