@@ -2,10 +2,10 @@
   :description "The classic tic-tac-toe game written in Clojure. This project isn't so much about tic-tac-toe but more about Clojure technology and how to write a code base that will run in multiple user interfaces. The tic-tac-toe games presents a small but interesting problem domain."
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.4.0"]
+  :dependencies [[org.clojure/clojure "1.5.0-RC1"]
                  [seesaw "1.4.2"]
                  [clojure-lanterna "0.9.2"]]
-  :plugins [[lein-cljsbuild "0.2.9"] [lein-resource "0.1.1"] ]
+  :plugins [[lein-cljsbuild "0.2.9"] [lein-resource "0.2.0"] ]
   :hooks [leiningen.cljsbuild]
   :source-path "src"
   :url "http://m0smith.freeshell.org/tictactoe.html"
@@ -26,4 +26,9 @@
                                    :pretty-print true}}]
               :crossovers [tic-tac-toe.core tic-tac-toe.ai.random]
   }
-  :main tic-tac-toe.ui.tty)
+  :main tic-tac-toe.ui.tty
+  :pom-addition [:developers [:developer
+                              [:name "Matthew O. Smith"]
+                              [:url "http://m0smith.com"]
+                              [:email "matt@m0smith.com"]
+                              [:timezone "-7"]]])
