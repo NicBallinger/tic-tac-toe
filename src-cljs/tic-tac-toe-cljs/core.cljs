@@ -16,7 +16,7 @@
           (set-html! button piece)
           (set-html! button "?"))))))
 
-(defn pressed
+(defn ^:export pressed
   ([row col] (pressed [row col]))
   ([box]
      (ttt/make-move ttt/X box)))
@@ -33,7 +33,7 @@
 (defn alerter [key ref old new]
   (js/alert (str "alerter" (:board new))))
 
-(defn init []
+(defn ^:export init []
   (ttt/add-game-watch :p1 (partial state-change ttt/X))
   (ttt/add-game-watch :p2 (partial ai-random/state-change-random ttt/Y (fn [f] (f))))
   (ttt/start-game)
