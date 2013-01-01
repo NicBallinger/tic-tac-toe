@@ -5,13 +5,14 @@
   :dependencies [[org.clojure/clojure "1.5.0-RC1"]
                  [seesaw "1.4.2"]
                  [clojure-lanterna "0.9.2"]]
-  :plugins [[lein-cljsbuild "0.2.9"] [lein-resource "0.2.0"] ]
-  :hooks [leiningen.cljsbuild]
+  :plugins [[lein-cljsbuild "0.2.9"] [lein-resource "0.3.1"] ]
+  :hooks [leiningen.cljsbuild leiningen.resource]
   :source-path "src"
   :url "http://m0smith.freeshell.org/tictactoe.html"
   :prep-tasks ["javac" "compile" "resource"]
   :resource {:resource-paths ["src-stencil"] ;; required or does nothing
-            :target-path "target/html"      ;; optional default to the global one
+             :target-path "target/html"      ;; optional default to the global one
+             :excludes [#".*~"]
             :extra-values { :year ~(.get (java.util.GregorianCalendar.)
                                          (java.util.Calendar/YEAR)) }  ;; optional - default to nil
            }
@@ -23,7 +24,7 @@
   :cljsbuild {
               :builds [{:source-path "src-cljs"
                         :compiler {:output-to "target/html/tictactoe.js"
-                                   :optimizations :advanced
+                                   ;:optimizations :advanced
                                    :pretty-print true}}]
               :crossovers [tic-tac-toe.core tic-tac-toe.ai.random]
   }

@@ -2,6 +2,8 @@
   (:require [tic-tac-toe.core :as ttt]
             [tic-tac-toe.ai.random :as ai-random]))
 
+(def colors { "?" "grey" "X" "yellow" "Y" "white"})
+
 (def last-id (atom -1))
 
 (defn set-html! [dom content]
@@ -13,8 +15,13 @@
       (let [button (.getElementById js/document (str box))
             piece (get game-board box)]
         (if piece
-          (set-html! button piece)
-          (set-html! button "?"))))))
+          (do
+            (set-html! button piece)
+            (set! (. button -style.background ) (colors piece)))
+          (do
+            (set-html! button "?")
+            (set! (. button -style.background ) (colors "?"))
+            ))))))
 
 (defn ^:export pressed
   ([row col] (pressed [row col]))
