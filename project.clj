@@ -24,7 +24,7 @@
   :cljsbuild {
               :builds [{:source-path "src-cljs"
                         :compiler {:output-to "target/html/tictactoe.js"
-                                   ;:optimizations :advanced
+                                   :optimizations :advanced
                                    :pretty-print true}}]
               :crossovers [tic-tac-toe.core tic-tac-toe.ai.random]
   }
