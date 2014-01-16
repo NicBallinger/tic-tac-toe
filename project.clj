@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.5.0-RC1"]
                  [seesaw "1.4.2"]
                  [clojure-lanterna "0.9.2"]]
-  :plugins [[lein-cljsbuild "0.2.9"] [lein-resource "0.3.1"] ]
+  :plugins [[lein-cljsbuild "0.2.9"] [lein-resource "0.3.3"] ]
   :hooks [leiningen.cljsbuild leiningen.resource]
   :source-path "src"
   :url "http://m0smith.freeshell.org/tictactoe.html"
