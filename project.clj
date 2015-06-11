@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [seesaw "1.4.4"]
                  [clojure-lanterna "0.9.4"]]
-  :plugins [[lein-cljsbuild "1.0.2"] [lein-resource "0.3.4"] ]
+  :plugins [[lein-cljsbuild "1.0.2"] [lein-resource "14.10.2"] ]
   :hooks [leiningen.cljsbuild leiningen.resource]
   :source-path "src"
   :url "http://m0smith.freeshell.org/tictactoe.html"
@@ -29,7 +29,7 @@
                          :optimizations :advanced}}],
               :crossovers [tic-tac-toe.core tic-tac-toe.ai.random]}
 
-  }
+  
   :main tic-tac-toe.ui.tty
   :pom-addition [:developers [:developer
                               [:name "Matthew O. Smith"]
