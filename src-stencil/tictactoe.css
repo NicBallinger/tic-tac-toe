@@ -20,8 +20,12 @@
 	background: -o-linear-gradient(top, #2F2727, #1a82f7); 
 }
 
+table { margin: auto; } 
+
 button {
-    background: url('12412_2_797163.jpg') 0 0 no-repeat;
+    background-image: url('12412_2_797163.jpg');
+    background-repeat: no-repeat;
+
     width: 150px;
     height: 150px;
 	      
@@ -38,5 +42,8 @@ button {
 }
 
 .empty {
-    background-position: -540px -861px
+    /* background-position: -540px -861px; */ /* white on black */
+    /* background-position: -708px -861px; */ /* black on gold*/
+    /* background-position: -373px -861px; */ /* Bback/White on Gold */
+    background-position: -206px -861px; /* White on Gold */
 }
