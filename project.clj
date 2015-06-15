@@ -11,6 +11,7 @@
   :url "http://m0smith.freeshell.org/tictactoe.html"
   :prep-tasks ["javac" "compile" "resource"]
   :resource {:resource-paths ["src-stencil"] ;; required or does nothing
+             :skip-stencil [ #"src-stencil/.*.gif" #"src-stencil/.*.jpg" ] 
              :target-path "target/html"      ;; optional default to the global one
              :excludes [#".*~"]
              :extra-values { :year ~(.get (java.util.GregorianCalendar.)

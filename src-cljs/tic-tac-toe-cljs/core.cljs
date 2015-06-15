@@ -17,13 +17,13 @@
         (if piece
           (do
             (set-html! button piece)
-            (set! (. button -style.background ) (colors piece))
+            ;(set! (. button -style.background ) (colors piece))
             (set! (. button -className ) piece))
 
 
           (do
             (set-html! button "?")
-            (set! (. button -style.background ) (colors "?"))
+            ;(set! (. button -style.background ) (colors "?"))
             (set! (. button -className ) "empty")
             ))))))
 

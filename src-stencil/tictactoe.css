@@ -19,3 +19,24 @@
 	/* Opera 11.10+ */ 
 	background: -o-linear-gradient(top, #2F2727, #1a82f7); 
 }
+
+button {
+    background: url('12412_2_797163.jpg') 0 0 no-repeat;
+    width: 150px;
+    height: 150px;
+	      
+}
+
+.X {
+    background-position: -545px -698px;
+    filter: invert(100%);
+    -webkit-filter: invert(100%);
+}
+
+.Y {
+   background-position: -708px -362px
+}
+
+.empty {
+    background-position: -540px -861px
+}
