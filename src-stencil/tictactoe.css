@@ -20,7 +20,23 @@
 	background: -o-linear-gradient(top, #2F2727, #1a82f7); 
 }
 
-table { margin: auto; } 
+body {
+    background-image: url('wood-old-bark-seamless-background.jpg');
+}
+
+table {
+    margin: auto;
+} 
+
+div.header {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white;
+} 
+
+h1 {
+    text-align: center;
+}
 
 button {
     background-image: url('12412_2_797163.jpg');
